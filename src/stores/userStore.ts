@@ -2,16 +2,16 @@ import type { User } from '@/models/UserModel'
 import { defineStore } from 'pinia'
 
 interface UserState {
-  user: User
+  users: User[]
 }
 
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
-    user: {} as User
+    users: JSON.parse(localStorage.getItem('vue-3-jwt-refresh-token-users') || '[]')
   }),
   actions: {
-    setUser(user: User): void {
-      this.user = user
+    setUsers(users: User[]): void {
+      this.users = users
     }
   }
 })

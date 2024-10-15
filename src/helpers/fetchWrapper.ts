@@ -13,13 +13,16 @@ function request(method: string) {
       method,
       headers: authHeader(url)
     }
+
     if (body) {
       requestOptions.headers = {
         ...requestOptions.headers,
         'Content-Type': 'application/json'
       }
+
       requestOptions.body = JSON.stringify(body)
     }
+
     if (credentials) {
       requestOptions.credentials = credentials
     }
@@ -36,7 +39,7 @@ function authHeader(url: string): Record<string, string> {
   const isApiUrl = url.startsWith(import.meta.env.VITE_API_URL)
 
   if (isLoggedIn && isApiUrl) {
-    return { Authroization: `Bearer ${auth.data?.jwtToken}` }
+    return { Authorization: `Bearer ${auth.data?.jwtToken}` }
   } else {
     return {}
   }

@@ -9,19 +9,30 @@ const usersKey = 'vue-3-jwt-refresh-token-users'
 const users: User[] = JSON.parse(localStorage.getItem(usersKey) || '[]')
 
 // Agregar un usuario test en localstorage si no hay ninguno
-const user: User = {
-  id: 1,
-  firstName: 'Matias',
-  lastName: 'Orellana',
-  userName: 'test',
-  password: 'test',
-  isAdmin: true,
-  refreshTokens: []
-}
+const usersData: User[] = [
+  {
+    id: 1,
+    firstName: 'Mateo',
+    lastName: 'Rodríguez',
+    userName: 'admin',
+    password: 'admin',
+    isAdmin: true,
+    refreshTokens: []
+  },
+  {
+    id: 2,
+    firstName: 'test',
+    lastName: 'test',
+    userName: 'test',
+    password: 'test',
+    isAdmin: false,
+    refreshTokens: []
+  }
+]
 
-// si no hay usuarios creamos uno y lo guardamos en almacenamiento local
+// si no hay usuarios los creamos y los guardamos en almacenamiento local
 if (!users.length) {
-  users.push(user)
+  users.push(...usersData)
   localStorage.setItem(usersKey, JSON.stringify(users))
 }
 
@@ -30,10 +41,8 @@ function fakeBackend() {
 
   window.fetch = function (url, opts: any): Promise<Response> {
     return new Promise((resolve, reject) => {
-      // Envolvemos la funcion en un setTimeout para simular una llamada a API
       setTimeout(handleRoute, 1000)
 
-      // manejamos las rutas falsas como si hicieramos llamados api
       function handleRoute() {
         const { method } = opts
         switch (true) {
@@ -163,13 +172,15 @@ function fakeBackend() {
         // Crea token que expira en 2 minutos
         const tokenPayload: JwtPayload = { exp: Math.round(Date.now() / 1000 + 2 * 60) }
         const fakeJwtToken: string = `fake-jwt-token.${btoa(JSON.stringify(tokenPayload))}`
+
         return fakeJwtToken
       }
 
       function generateRefreshToken(): string {
         const token = new Date().getTime().toString()
-        // Agregar un refresh token que expira en 7 dias
-        const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString()
+        // Agregar un refresh token que expira en 180 segundos
+        const expires = new Date(Date.now() + 180 * 1000).toUTCString()
+
         document.cookie = `fakeRefreshToken=${token}; expires=${expires}; path=/`
 
         return token
